@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:chilla_customer/CustomerRegistration.dart';
 import 'package:chilla_customer/Login.dart';
-import 'package:chilla_customer/WelcomePage.dart';
 import 'package:chilla_customer/design.dart';
 //import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -60,7 +60,7 @@ class _CreateAccountState extends State<CreateAccount> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => WelcomePage()),
+          MaterialPageRoute(builder: (context) => Customerregistration()),
         );
       } else {
         _showErrorDialog('Failed to create account. Please try again.');
