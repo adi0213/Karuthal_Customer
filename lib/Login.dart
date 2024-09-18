@@ -47,12 +47,39 @@ class _LoginState extends State<Login> {
           MaterialPageRoute(builder: (context) => Dashboard()),
         );
       } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF57CC99),
+            content: Text(
+              'Please Enter Valid Email or Password',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        );
         print('Login failed with status code: ${response.statusCode}');
         print('Error message: ${response.body}');
       }
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFF57CC99),
+          content: Text(
+            'Network Error',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+      );
       print('Error occurred: $e');
       if (e is http.ClientException) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF57CC99),
+            content: Text(
+              'Network Error',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        );
         print('Possible CORS or network error.');
       }
     }

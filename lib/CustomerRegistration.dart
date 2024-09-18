@@ -145,7 +145,7 @@ class _CustomerregistrationState extends State<Customerregistration> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const Dashboard(),
+                                      builder: (context) => Dashboard(),
                                     ),
                                   );
                                 } else {
