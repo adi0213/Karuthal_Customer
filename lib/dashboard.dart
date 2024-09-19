@@ -1,5 +1,7 @@
+import 'package:chilla_customer/Caretakers.dart';
 import 'package:chilla_customer/Error.dart';
 import 'package:chilla_customer/PatientEnrollment/PatientEnroll.dart';
+import 'package:chilla_customer/feedback.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatelessWidget {
@@ -86,7 +88,7 @@ class Dashboard extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => work()),
+                                      builder: (context) => Caretakers()),
                                 );
                               },
                             ),
@@ -102,7 +104,7 @@ class Dashboard extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => work()),
+                                      builder: (context) => FeedbackPage()),
                                 );
                               },
                             ),

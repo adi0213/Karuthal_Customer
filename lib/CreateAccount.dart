@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:chilla_customer/CustomerRegistration.dart';
 import 'package:chilla_customer/Login.dart';
 import 'package:chilla_customer/design.dart';
-//import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -20,14 +20,14 @@ class _CreateAccountState extends State<CreateAccount> {
   final TextEditingController _PhoneNumberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  //final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   bool _isPasswordVisible = false;
 
   Future<void> _signUp() async {
     if (!_formKey.currentState!.validate()) return;
 
     const String apiUrl =
-        'http://104.237.9.211:8007/karuthal/api/v1/usermanagement/signup';
+        'http://104.237.9.211:8007/karuthal/api/v1/persona/signup';
 
     final Map<String, dynamic> requestData = {
       'email': _emailController.text.trim(),
@@ -43,20 +43,20 @@ class _CreateAccountState extends State<CreateAccount> {
         },
         body: jsonEncode(requestData),
       );
-
+      print(response.statusCode);
       if (response.statusCode == 200) {
-        //final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-        //print('responseData ${responseData['id']}');
+        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+        print(responseData);
 
         //print(responseData);
         //print("Type: ${responseData is Map}");
         //print("id: ${responseData['id']}");
 
         // Assuming the token is in the 'token' field of the response
-        //final String token = responseData['id'];
+        final String token = responseData['token'];
 
         // Store the token using Flutter Secure Storage
-        //await _secureStorage.write(key: 'bearer_token', value: token);
+        await _secureStorage.write(key: 'bearer_token', value: token);
 
         Navigator.push(
           context,
