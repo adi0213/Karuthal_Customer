@@ -15,8 +15,9 @@ class _PatientenrollState extends State<Patientenroll> {
   bool _termsAccepted = false;
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _healthDifficultiesController =
@@ -70,34 +71,50 @@ class _PatientenrollState extends State<Patientenroll> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  _buildLabelText(context, "Phone Number"),
+                  _buildLabelText(context, "Name"),
                   const SizedBox(height: 8),
                   _buildTextField(
                     context,
-                    controller: _phoneController,
+                    controller: _nameController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your phone number';
-                      } else if (value.length != 10) {
-                        return 'Must be 10 digits';
+                        return 'Please enter Name';
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 30),
-                  _buildLabelText(context, "Address"),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                    context,
-                    controller: _addressController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your address';
-                      }
-                      return null;
-                    },
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildLabelText(context, "Age"),
+                            const SizedBox(height: 8),
+                            _buildTextField(
+                              context,
+                              controller: _ageController,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildLabelText(context, "Gender"),
+                            const SizedBox(height: 8),
+                            _buildTextField(
+                              context,
+                              controller: _genderController,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  _buildLabelText(context, "Permanent Address"),
                   const SizedBox(height: 30),
                   Row(
                     children: [

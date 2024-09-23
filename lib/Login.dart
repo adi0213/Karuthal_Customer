@@ -42,46 +42,24 @@ class _LoginState extends State<Login> {
       );
 
       if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final bearerToken = responseData['authtoken'];
+        print(bearerToken);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Dashboard()),
         );
+        return bearerToken;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Color(0xFF57CC99),
-            content: Text(
-              'Please Enter Valid Email or Password',
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(context)
+            .showCustomSnackBar(context, "ERROR\nInvalid Entry");
         print('Login failed with status code: ${response.statusCode}');
         print('Error message: ${response.body}');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFF57CC99),
-          content: Text(
-            'Network Error',
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(context)
+          .showCustomSnackBar(context, "Network Error");
       print('Error occurred: $e');
-      if (e is http.ClientException) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Color(0xFF57CC99),
-            content: Text(
-              'Network Error',
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-        );
-        print('Possible CORS or network error.');
-      }
     }
   }
 
@@ -126,9 +104,7 @@ class _LoginState extends State<Login> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
-                            } /* else if (!value.contains('@')) {
-                              return 'Please enter a valid email';
-                            }*/
+                            }
                             return null;
                           },
                         ),
@@ -187,7 +163,6 @@ class _LoginState extends State<Login> {
                               ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  // Call the login function here
                                   _login();
                                 }
                               },
@@ -220,10 +195,11 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: Column(children: [
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: Column(
+                          children: [
                             Image.asset(
                               'assets/oldcare2.png',
                               height: 250,
@@ -257,16 +233,15 @@ class _LoginState extends State<Login> {
                                 ],
                               ),
                             ),
-                            SizedBox(
-                              height: 20,
-                            ),
+                            SizedBox(height: 20),
                             Center(
                               child: GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => CreateAccount()),
+                                      builder: (context) => CreateAccount(),
+                                    ),
                                   );
                                 },
                                 child: Text(
@@ -282,7 +257,9 @@ class _LoginState extends State<Login> {
                                 ),
                               ),
                             ),
-                          ])),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -354,5 +331,47 @@ class _LoginState extends State<Login> {
         return null;
       },
     );
+  }
+}
+
+// Extension for custom snack bar
+extension CustomSnackBar on ScaffoldMessengerState {
+  void showCustomSnackBar(BuildContext context, String text) {
+    OverlayState? overlayState = Overlay.of(context); // Get the overlay state
+    OverlayEntry overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: 50.0,
+        left: MediaQuery.of(context).size.width * 0.2,
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: Material(
+          elevation: 5.0,
+          borderRadius: BorderRadius.circular(8.0),
+          child: Container(
+            height: 75,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontSize: 22.0,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Insert the overlay entry into the overlay state
+    overlayState.insert(overlayEntry);
+
+    // Remove the overlay entry after a delay of 2 seconds
+    Future.delayed(const Duration(seconds: 4), () {
+      overlayEntry.remove();
+    });
   }
 }

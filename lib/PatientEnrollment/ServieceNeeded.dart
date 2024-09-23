@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ServieceNeeded extends StatefulWidget {
-  final Function(String selected) onSelectionChanged; // Storing the callback
+  final Function(String selected) onSelectionChanged;
 
-  const ServieceNeeded(
-      {super.key, required this.onSelectionChanged}); // Updated constructor
+  const ServieceNeeded({super.key, required this.onSelectionChanged});
 
   @override
   _ServieceNeeded createState() => _ServieceNeeded();
@@ -24,7 +23,7 @@ class _ServieceNeeded extends State<ServieceNeeded> {
       _isExpanded = false;
     });
 
-    widget.onSelectionChanged(hintText); // Notify the parent of the selection
+    widget.onSelectionChanged(hintText);
   }
 
   @override

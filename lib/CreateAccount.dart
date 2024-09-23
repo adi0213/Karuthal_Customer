@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:chilla_customer/CustomerRegistration.dart';
 import 'package:chilla_customer/Login.dart';
+
 import 'package:chilla_customer/design.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,6 @@ class _CreateAccountState extends State<CreateAccount> {
   final TextEditingController _PhoneNumberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   bool _isPasswordVisible = false;
 
   Future<void> _signUp() async {
@@ -32,6 +31,7 @@ class _CreateAccountState extends State<CreateAccount> {
     final Map<String, dynamic> requestData = {
       'email': _emailController.text.trim(),
       'password': _passwordController.text.trim(),
+      "persona": "customer"
     };
 
     try {
@@ -41,33 +41,59 @@ class _CreateAccountState extends State<CreateAccount> {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode(requestData),
+        body: json.encode(requestData),
       );
-      print(response.statusCode);
+
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-        print(responseData);
-
-        //print(responseData);
-        //print("Type: ${responseData is Map}");
-        //print("id: ${responseData['id']}");
-
-        // Assuming the token is in the 'token' field of the response
-        final String token = responseData['token'];
-
-        // Store the token using Flutter Secure Storage
-        await _secureStorage.write(key: 'bearer_token', value: token);
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Customerregistration()),
-        );
+        await _login();
       } else {
         _showErrorDialog('Failed to create account. Please try again.');
       }
     } catch (e) {
       print(e);
       _showErrorDialog('Error occurred. Please try again later.');
+    }
+  }
+
+  Future<void> _login() async {
+    const String url =
+        'http://104.237.9.211:8007/karuthal/api/v1/usermanagement/login';
+    final Map<String, dynamic> body = {
+      "username": _emailController.text,
+      "password": _passwordController.text,
+    };
+
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final bearerToken = responseData['authtoken'];
+        print(bearerToken);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Customerregistration()),
+        );
+        return bearerToken;
+      } else {
+        ScaffoldMessenger.of(context)
+            .showCustomSnackBar(context, "ERROR\nInvalid Entry");
+        print('Login failed with status code: ${response.statusCode}');
+        print('Error message: ${response.body}');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showCustomSnackBar(context, "Network Error");
+      print('Error occurred: $e');
     }
   }
 
