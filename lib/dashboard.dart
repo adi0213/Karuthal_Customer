@@ -5,17 +5,18 @@ import 'package:chilla_customer/feedback.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatelessWidget {
+  void _toggleDrawer(BuildContext context) {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Color(0xFF57CC99)),
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.menu, color: Color(0xFF57CC99)),
-          onPressed: () {},
-        ),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications, color: Color(0xFF57CC99)),
@@ -30,6 +31,81 @@ class Dashboard extends StatelessWidget {
             onPressed: () {},
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: RotatedBox(
+                quarterTurns: 1,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.menu,
+                    size: 35,
+                    color: Colors.green,
+                  ),
+                  onPressed: () => _toggleDrawer(context),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 25,
+            ),
+            Container(
+              height: 2,
+              color: const Color.fromARGB(255, 173, 211, 175),
+              width: double.infinity,
+            ),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  SizedBox(height: 30),
+                  ListTile(
+                    leading: Icon(Icons.dashboard, color: Colors.green),
+                    title: Text('Dashboard',
+                        style: TextStyle(color: Colors.green, fontSize: 20)),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  ListTile(
+                    leading: Icon(Icons.person, color: Colors.green),
+                    title: Text('View Profile',
+                        style: TextStyle(color: Colors.green, fontSize: 20)),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  ListTile(
+                    leading:
+                        Icon(Icons.calendar_today_rounded, color: Colors.green),
+                    title: Text('Calendar',
+                        style: TextStyle(color: Colors.green, fontSize: 20)),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  ListTile(
+                    leading: Icon(Icons.logout, color: Colors.green),
+                    title: Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.green, fontSize: 20),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16),
@@ -164,7 +240,7 @@ class CustomButton extends StatelessWidget {
   final Color bottomColor;
   final String label;
   final double fontSize;
-  final VoidCallback onPressed; // Added fontSize parameter
+  final VoidCallback onPressed;
 
   CustomButton({
     required this.height,
@@ -179,7 +255,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed, // Trigger the onPressed callback
+      onTap: onPressed,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
@@ -213,7 +289,7 @@ class CustomButton extends StatelessWidget {
                   child: Text(
                     label,
                     style: TextStyle(
-                      fontSize: fontSize, // Use the fontSize parameter
+                      fontSize: fontSize,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CreateAccount extends StatefulWidget {
+  static String bearerToken = "";
   const CreateAccount({super.key});
 
   @override
@@ -77,22 +78,23 @@ class _CreateAccountState extends State<CreateAccount> {
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        final bearerToken = responseData['authtoken'];
-        print(bearerToken);
+        CreateAccount.bearerToken = responseData['authtoken'];
+        print(CreateAccount.bearerToken);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Customerregistration()),
+          MaterialPageRoute(
+              builder: (context) => Customerregistration(
+                    email: _emailController.text,
+                    token: CreateAccount.bearerToken,
+                  )),
         );
-        return bearerToken;
       } else {
-        ScaffoldMessenger.of(context)
-            .showCustomSnackBar(context, "ERROR\nInvalid Entry");
+        ScaffoldMessenger.of(context).showCustomSnackBar(context, "ERROR\nInvalid Entry");
         print('Login failed with status code: ${response.statusCode}');
         print('Error message: ${response.body}');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showCustomSnackBar(context, "Network Error");
+      ScaffoldMessenger.of(context).showCustomSnackBar(context, "Network Error");
       print('Error occurred: $e');
     }
   }
