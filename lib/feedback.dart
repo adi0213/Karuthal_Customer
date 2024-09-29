@@ -5,6 +5,9 @@ import 'dart:math' as math;
 import 'package:google_fonts/google_fonts.dart';
 
 class FeedbackPage extends StatefulWidget {
+  final String email;
+  final String token;
+  const FeedbackPage({super.key, required this.email, required this.token});
   @override
   _FeedbackPageState createState() => _FeedbackPageState();
 }
@@ -21,7 +24,11 @@ class _FeedbackPageState extends State<FeedbackPage> {
     final additionalFeedback = _additionalFeedbackController.text;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Dashboard()),
+      MaterialPageRoute(
+          builder: (context) => Dashboard(
+                email: widget.email,
+                token: "Bearer ${widget.token}",
+              )),
     );
     print('Rating: $_rating');
     print('Feedback: $feedback');

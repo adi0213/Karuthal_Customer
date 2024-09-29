@@ -8,6 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
+  static String bearerToken = "";
+
   const Login({super.key});
 
   @override
@@ -43,13 +45,17 @@ class _LoginState extends State<Login> {
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        final bearerToken = responseData['authtoken'];
-        print(bearerToken);
+        Login.bearerToken = responseData['authtoken'];
+        print(Login.bearerToken);
+        print(responseData);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Dashboard()),
+          MaterialPageRoute(
+              builder: (context) => Dashboard(
+                    email: _emailController.text,
+                    token: Login.bearerToken,
+                  )),
         );
-        return bearerToken;
       } else {
         ScaffoldMessenger.of(context)
             .showCustomSnackBar(context, "ERROR\nInvalid Entry");

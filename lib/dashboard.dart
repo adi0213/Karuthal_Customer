@@ -1,10 +1,18 @@
-import 'package:chilla_customer/Caretakers.dart';
 import 'package:chilla_customer/Error.dart';
 import 'package:chilla_customer/PatientEnrollment/PatientEnroll.dart';
 import 'package:chilla_customer/feedback.dart';
 import 'package:flutter/material.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
+  final String email;
+  final String token;
+  const Dashboard({super.key, required this.email, required this.token});
+
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
   void _toggleDrawer(BuildContext context) {
     Navigator.pop(context);
   }
@@ -141,7 +149,10 @@ class Dashboard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Patientenroll()),
+                            builder: (context) => Patientenroll(
+                                  email: widget.email,
+                                  token: 'Bearer ${widget.token}',
+                                )),
                       );
                     },
                   ),
@@ -154,33 +165,20 @@ class Dashboard extends StatelessWidget {
                         child: Column(
                           children: [
                             CustomButton(
-                              height: 181,
-                              width: 170,
+                              height: 285,
+                              width: 172,
                               topColor: Color(0xFF49C38E),
                               bottomColor: Color(0xFF57CC99),
-                              label: 'Book Caretaker',
+                              label: 'Feedback',
                               fontSize: 28,
                               onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Caretakers()),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 20),
-                            CustomButton(
-                              height: 84,
-                              width: 170,
-                              topColor: Color(0xFF72CDD9),
-                              bottomColor: Color(0xFF72CDD9),
-                              label: 'Feedback',
-                              fontSize: 27,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => FeedbackPage()),
+                                      builder: (context) => FeedbackPage(
+                                            email: widget.email,
+                                            token: "Bearer ${widget.token}",
+                                          )),
                                 );
                               },
                             ),

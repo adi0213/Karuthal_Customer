@@ -1,11 +1,13 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:chilla_customer/Error.dart';
-import 'package:chilla_customer/PatientEnrollment/AdditionalService.dart';
-import 'package:chilla_customer/PatientEnrollment/ServieceNeeded.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Patientenroll extends StatefulWidget {
-  const Patientenroll({super.key});
+  final String email;
+  final String token;
+  const Patientenroll({super.key, required this.email, required this.token});
 
   @override
   State<Patientenroll> createState() => _PatientenrollState();
@@ -15,15 +17,57 @@ class _PatientenrollState extends State<Patientenroll> {
   bool _termsAccepted = false;
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _firstnameController = TextEditingController();
+  final TextEditingController _lastnameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _relationController = TextEditingController();
   final TextEditingController _healthDifficultiesController =
       TextEditingController();
 
-  String? _serviceNeededSelected;
+  Future<void> _enrollPatient() async {
+    final url =
+        'http://104.237.9.211:8007/karuthal/api/v1/persona/enrollpatient';
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${widget.token}',
+    };
+
+    final body = jsonEncode({
+      "age": int.tryParse(_ageController.text) ?? 0,
+      "gender": _genderController.text,
+      "healthDescription": _healthDifficultiesController.text,
+      "email": widget.email,
+      "firstName": _firstnameController.text,
+      "lastName": _lastnameController.text,
+      "enrolledBy": {"customerId": 1},
+    });
+
+    try {
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: body);
+      if (response.statusCode == 200) {
+        // Handle success
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const work()));
+      } else {
+        // Handle error response
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Failed to enroll patient: ${response.body}'),
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      // Handle exceptions
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error occurred: $e'),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,18 +115,45 @@ class _PatientenrollState extends State<Patientenroll> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  _buildLabelText(context, "Name"),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                    context,
-                    controller: _nameController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter Name';
-                      }
-                      return null;
-                    },
-                  ),
+                  Row(children: [
+                    Expanded(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildLabelText(context, "FirstName"),
+                            const SizedBox(height: 8),
+                            _buildTextField(
+                              context,
+                              controller: _firstnameController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter FirstName';
+                                }
+                                return null;
+                              },
+                            ),
+                          ]),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildLabelText(context, "LastName"),
+                            const SizedBox(height: 8),
+                            _buildTextField(
+                              context,
+                              controller: _lastnameController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter LastName';
+                                }
+                                return null;
+                              },
+                            ),
+                          ]),
+                    )
+                  ]),
                   const SizedBox(height: 30),
                   Row(
                     children: [
@@ -161,17 +232,18 @@ class _PatientenrollState extends State<Patientenroll> {
                     },
                   ),
                   const SizedBox(height: 30),
-                  _buildLabelText(context, "Service Needed"),
-                  ServieceNeeded(
-                    onSelectionChanged: (selected) {
-                      setState(() {
-                        _serviceNeededSelected = selected;
-                      });
+                  _buildLabelText(context, "Relation with patient"),
+                  const SizedBox(height: 8),
+                  _buildTextField(
+                    context,
+                    controller: _relationController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter Relation';
+                      }
+                      return null;
                     },
                   ),
-                  const SizedBox(height: 30),
-                  _buildLabelText(context, "Additional Service"),
-                  AdditionalService(),
                   const SizedBox(height: 50),
                   const Text(
                     "Terms and Conditions",
@@ -209,24 +281,7 @@ class _PatientenrollState extends State<Patientenroll> {
                         onPressed: _termsAccepted
                             ? () {
                                 if (_formKey.currentState!.validate()) {
-                                  if (_serviceNeededSelected != null) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const work(),
-                                      ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        backgroundColor: Color(0xFF57CC99),
-                                        content: Text(
-                                          'Please select the required services',
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                      ),
-                                    );
-                                  }
+                                  _enrollPatient();
                                 }
                               }
                             : null,
