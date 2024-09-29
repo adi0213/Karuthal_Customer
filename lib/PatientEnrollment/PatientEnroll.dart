@@ -7,7 +7,12 @@ import 'package:google_fonts/google_fonts.dart';
 class Patientenroll extends StatefulWidget {
   final String email;
   final String token;
-  const Patientenroll({super.key, required this.email, required this.token});
+  final String customerId;
+  const Patientenroll(
+      {super.key,
+      required this.email,
+      required this.token,
+      required this.customerId});
 
   @override
   State<Patientenroll> createState() => _PatientenrollState();
@@ -43,7 +48,7 @@ class _PatientenrollState extends State<Patientenroll> {
       "email": widget.email,
       "firstName": _firstnameController.text,
       "lastName": _lastnameController.text,
-      "enrolledBy": {"customerId": 1},
+      "enrolledBy": {"customerId": widget.customerId},
     });
 
     try {

@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 class Login extends StatefulWidget {
   static String bearerToken = "";
 
+  static int customerId = 0;
+
   const Login({super.key});
 
   @override
@@ -17,8 +19,27 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final _formKey = GlobalKey<FormState>();
+  Future<int> getCustomerId(String response) async {
+    int cid = 0;
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${jsonDecode(response)["authtoken"]}',
+    };
+    final customerList = await http.get(
+      Uri.parse("http://104.237.9.211:8007/karuthal/api/v1/persona/customers"),
+      headers: headers,
+    );
 
+    final List<dynamic> customers = jsonDecode(customerList.body);
+    customers.forEach((v) {
+      if (jsonDecode(response)['id'] == v['registeredUser']['id']) {
+        cid = v['customerId'];
+      }
+    });
+    return cid;
+  }
+
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -26,12 +47,11 @@ class _LoginState extends State<Login> {
   Future<void> _login() async {
     const String url =
         'http://104.237.9.211:8007/karuthal/api/v1/usermanagement/login';
-    final Map<String, dynamic> body = {
+    final body = {
       "username": _emailController.text,
       "password": _passwordController.text,
     };
-
-    final Map<String, String> headers = {
+    final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
@@ -46,26 +66,24 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         Login.bearerToken = responseData['authtoken'];
-        print(Login.bearerToken);
-        print(responseData);
+        Login.customerId = (await getCustomerId(response.body));
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => Dashboard(
-                    email: _emailController.text,
-                    token: Login.bearerToken,
-                  )),
+            builder: (context) => Dashboard(
+              email: _emailController.text,
+              token: Login.bearerToken,
+              customerId: Login.customerId,
+            ),
+          ),
         );
       } else {
         ScaffoldMessenger.of(context)
             .showCustomSnackBar(context, "ERROR\nInvalid Entry");
-        print('Login failed with status code: ${response.statusCode}');
-        print('Error message: ${response.body}');
       }
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showCustomSnackBar(context, "Network Error");
-      print('Error occurred: $e');
     }
   }
 
@@ -312,15 +330,14 @@ class _LoginState extends State<Login> {
         ),
         child: TextFormField(
           controller: controller,
-          cursorColor: const Color(0xFF838181),
-          obscureText: isPassword ? !_isPasswordVisible : false,
-          decoration: const InputDecoration(
+          obscureText: isPassword && !_isPasswordVisible,
+          decoration: InputDecoration(
+            hintText: isPassword ? 'Enter your password' : 'Enter your email',
             border: InputBorder.none,
             contentPadding:
-                EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
           ),
           validator: validator,
-          style: TextStyle(fontSize: 14),
         ),
       ),
     );
@@ -343,7 +360,7 @@ class _LoginState extends State<Login> {
 // Extension for custom snack bar
 extension CustomSnackBar on ScaffoldMessengerState {
   void showCustomSnackBar(BuildContext context, String text) {
-    OverlayState? overlayState = Overlay.of(context); // Get the overlay state
+    OverlayState? overlayState = Overlay.of(context);
     OverlayEntry overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         bottom: 50.0,

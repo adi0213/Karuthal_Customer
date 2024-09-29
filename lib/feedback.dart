@@ -7,7 +7,12 @@ import 'package:google_fonts/google_fonts.dart';
 class FeedbackPage extends StatefulWidget {
   final String email;
   final String token;
-  const FeedbackPage({super.key, required this.email, required this.token});
+  final String customerId;
+  const FeedbackPage(
+      {super.key,
+      required this.email,
+      required this.token,
+      required this.customerId});
   @override
   _FeedbackPageState createState() => _FeedbackPageState();
 }
@@ -28,6 +33,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
           builder: (context) => Dashboard(
                 email: widget.email,
                 token: "Bearer ${widget.token}",
+                customerId: widget.customerId,
               )),
     );
     print('Rating: $_rating');

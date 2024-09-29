@@ -6,7 +6,13 @@ import 'package:flutter/material.dart';
 class Dashboard extends StatefulWidget {
   final String email;
   final String token;
-  const Dashboard({super.key, required this.email, required this.token});
+  final String customerId;
+
+  const Dashboard(
+      {super.key,
+      required this.email,
+      required this.token,
+      required this.customerId});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -152,6 +158,7 @@ class _DashboardState extends State<Dashboard> {
                             builder: (context) => Patientenroll(
                                   email: widget.email,
                                   token: 'Bearer ${widget.token}',
+                                  customerId: widget.customerId,
                                 )),
                       );
                     },
@@ -178,6 +185,7 @@ class _DashboardState extends State<Dashboard> {
                                       builder: (context) => FeedbackPage(
                                             email: widget.email,
                                             token: "Bearer ${widget.token}",
+                                            customerId: widget.customerId,
                                           )),
                                 );
                               },

@@ -8,8 +8,12 @@ import 'package:http/http.dart' as http;
 class Customerregistration extends StatefulWidget {
   final String email;
   final String token;
+  final String customerId;
   const Customerregistration(
-      {super.key, required this.email, required this.token});
+      {super.key,
+      required this.email,
+      required this.token,
+      required this.customerId});
 
   @override
   State<Customerregistration> createState() => _CustomerregistrationState();
@@ -53,6 +57,7 @@ class _CustomerregistrationState extends State<Customerregistration> {
               builder: (context) => Dashboard(
                     email: widget.email,
                     token: "Bearer ${widget.token}",
+                    customerId: widget.customerId,
                   )),
         );
       } else {
