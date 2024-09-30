@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 class FeedbackPage extends StatefulWidget {
   final String email;
   final String token;
-  final String customerId;
+  final int customerId;
   const FeedbackPage(
       {super.key,
       required this.email,

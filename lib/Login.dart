@@ -9,8 +9,7 @@ import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
   static String bearerToken = "";
-
-  static int customerId = 0;
+  static int customerId = -1;
 
   const Login({super.key});
 
@@ -66,7 +65,7 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         Login.bearerToken = responseData['authtoken'];
-        Login.customerId = (await getCustomerId(response.body));
+        Login.customerId = await getCustomerId(response.body);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

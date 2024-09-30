@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class Customerregistration extends StatefulWidget {
   final String email;
   final String token;
-  final String customerId;
+  final int customerId;
   const Customerregistration(
       {super.key,
       required this.email,

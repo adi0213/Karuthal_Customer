@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 class Patientenroll extends StatefulWidget {
   final String email;
   final String token;
-  final String customerId;
+  final int customerId;
   const Patientenroll(
       {super.key,
       required this.email,

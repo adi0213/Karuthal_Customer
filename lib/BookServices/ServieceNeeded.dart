@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ServieceNeeded extends StatefulWidget {
-  final Function(String selected) onSelectionChanged;
-
-  const ServieceNeeded({super.key, required this.onSelectionChanged});
+  const ServieceNeeded({super.key});
 
   @override
   _ServieceNeeded createState() => _ServieceNeeded();
@@ -22,8 +20,6 @@ class _ServieceNeeded extends State<ServieceNeeded> {
           TextSelection.fromPosition(TextPosition(offset: hintText.length));
       _isExpanded = false;
     });
-
-    widget.onSelectionChanged(hintText);
   }
 
   @override

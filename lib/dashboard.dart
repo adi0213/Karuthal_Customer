@@ -1,12 +1,13 @@
+import 'package:chilla_customer/BookServices/Booking.dart';
 import 'package:chilla_customer/Error.dart';
-import 'package:chilla_customer/PatientEnrollment/PatientEnroll.dart';
+import 'package:chilla_customer/PatientEnroll.dart';
 import 'package:chilla_customer/feedback.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
   final String email;
   final String token;
-  final String customerId;
+  final int customerId;
 
   const Dashboard(
       {super.key,
@@ -172,7 +173,7 @@ class _DashboardState extends State<Dashboard> {
                         child: Column(
                           children: [
                             CustomButton(
-                              height: 285,
+                              height: 140,
                               width: 172,
                               topColor: Color(0xFF49C38E),
                               bottomColor: Color(0xFF57CC99),
@@ -190,6 +191,24 @@ class _DashboardState extends State<Dashboard> {
                                 );
                               },
                             ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            CustomButton(
+                              height: 140,
+                              width: 172,
+                              topColor: Color(0xFF49C38E),
+                              bottomColor: Color(0xFF57CC99),
+                              label: '   View Service \n        History',
+                              fontSize: 28,
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => work(),
+                                    ));
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -201,12 +220,13 @@ class _DashboardState extends State<Dashboard> {
                           width: 172,
                           topColor: Color(0xFF62CDB4),
                           bottomColor: Color(0xFF72D9C1),
-                          label: '   View Service \n        History',
+                          label: '    Book \n  Service',
                           fontSize: 28,
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => work()),
+                              MaterialPageRoute(
+                                  builder: (context) => BookService()),
                             );
                           },
                         ),

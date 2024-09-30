@@ -11,7 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class CreateAccount extends StatefulWidget {
   static String bearerToken = "";
-  static String customerId = "";
+  static int customerId = -1;
   const CreateAccount({super.key});
 
   @override
@@ -102,8 +102,7 @@ class _CreateAccountState extends State<CreateAccount> {
         final responseData = json.decode(response.body);
         CreateAccount.bearerToken = responseData['authtoken'];
         print(CreateAccount.bearerToken);
-        CreateAccount.customerId =
-            (await getCustomerId(response.body)) as String;
+        CreateAccount.customerId = await getCustomerId(response.body);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
