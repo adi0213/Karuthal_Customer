@@ -33,7 +33,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
           builder: (context) => Dashboard(
                 email: widget.email,
                 token: "Bearer ${widget.token}",
-                customerId: widget.customerId,
               )),
     );
     print('Rating: $_rating');

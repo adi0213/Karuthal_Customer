@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:chilla_customer/CustomerRegistration.dart';
-
 import 'package:chilla_customer/Login.dart';
 
 import 'package:chilla_customer/design.dart';
@@ -11,7 +10,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 class CreateAccount extends StatefulWidget {
   static String bearerToken = "";
-  static int customerId = -1;
   const CreateAccount({super.key});
 
   @override
@@ -58,26 +56,6 @@ class _CreateAccountState extends State<CreateAccount> {
     }
   }
 
-  Future<int> getCustomerId(String response) async {
-    int cid = 0;
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${jsonDecode(response)["authtoken"]}',
-    };
-    final customerList = await http.get(
-      Uri.parse("http://104.237.9.211:8007/karuthal/api/v1/persona/customers"),
-      headers: headers,
-    );
-
-    final List<dynamic> customers = jsonDecode(customerList.body);
-    customers.forEach((v) {
-      if (jsonDecode(response)['id'] == v['registeredUser']['id']) {
-        cid = v['customerId'];
-      }
-    });
-    return cid;
-  }
-
   Future<void> _login() async {
     const String url =
         'http://104.237.9.211:8007/karuthal/api/v1/usermanagement/login';
@@ -100,27 +78,24 @@ class _CreateAccountState extends State<CreateAccount> {
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
+        print("Create: ,$responseData");
         CreateAccount.bearerToken = responseData['authtoken'];
         print(CreateAccount.bearerToken);
-        CreateAccount.customerId = await getCustomerId(response.body);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => Customerregistration(
                     email: _emailController.text,
                     token: CreateAccount.bearerToken,
-                    customerId: CreateAccount.customerId,
                   )),
         );
       } else {
-        ScaffoldMessenger.of(context)
-            .showCustomSnackBar(context, "ERROR\nInvalid Entry");
+        //ScaffoldMessenger.of(context).showCustomSnackBar(context, "ERROR\nInvalid Entry");
         print('Login failed with status code: ${response.statusCode}');
         print('Error message: ${response.body}');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showCustomSnackBar(context, "Network Error");
+      //ScaffoldMessenger.of(context).showCustomSnackBar(context, "Network Error");
       print('Error occurred: $e');
     }
   }

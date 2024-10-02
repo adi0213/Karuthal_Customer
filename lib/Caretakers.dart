@@ -40,8 +40,8 @@ class CaretakersState extends State<Caretakers> {
               ),
               Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.0),
                     child: Row(
                       children: [
                         Expanded(
@@ -51,7 +51,7 @@ class CaretakersState extends State<Caretakers> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text(
                             "Available Caretakers",
                             style: TextStyle(
@@ -99,7 +99,7 @@ class CaretakersState extends State<Caretakers> {
         width: 270,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFFC7F9CC),
+            backgroundColor: const Color(0xFFC7F9CC),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -113,16 +113,16 @@ class CaretakersState extends State<Caretakers> {
                 margin: const EdgeInsets.symmetric(horizontal: 8.0),
                 width: 45,
                 height: 45,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.greenAccent,
                   shape: BoxShape.circle,
                 ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 24,
                     color: Colors.green,
                   ),

@@ -9,8 +9,6 @@ import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
   static String bearerToken = "";
-  static int customerId = -1;
-
   const Login({super.key});
 
   @override
@@ -18,27 +16,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  Future<int> getCustomerId(String response) async {
-    int cid = 0;
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${jsonDecode(response)["authtoken"]}',
-    };
-    final customerList = await http.get(
-      Uri.parse("http://104.237.9.211:8007/karuthal/api/v1/persona/customers"),
-      headers: headers,
-    );
-
-    final List<dynamic> customers = jsonDecode(customerList.body);
-    customers.forEach((v) {
-      if (jsonDecode(response)['id'] == v['registeredUser']['id']) {
-        cid = v['customerId'];
-      }
-    });
-    return cid;
-  }
-
   final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -46,11 +25,12 @@ class _LoginState extends State<Login> {
   Future<void> _login() async {
     const String url =
         'http://104.237.9.211:8007/karuthal/api/v1/usermanagement/login';
-    final body = {
+    final Map<String, dynamic> body = {
       "username": _emailController.text,
       "password": _passwordController.text,
     };
-    final headers = {
+
+    final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
@@ -63,26 +43,65 @@ class _LoginState extends State<Login> {
       );
 
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        Login.bearerToken = responseData['authtoken'];
-        Login.customerId = await getCustomerId(response.body);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Dashboard(
+        print(response.body);
+        print(jsonDecode(response.body)["assignedRoles"]);
+        Login.bearerToken = jsonDecode(response.body)['authtoken'];
+        if(!jsonDecode(response.body)["assignedRoles"].contains('Customer')){
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Color(0xFF57CC99),
+              content: Text(
+                'Not a Customer',
+              style: TextStyle(color: Colors.black),
+              ),
+            ),
+          );
+        }
+        else{
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Dashboard(
               email: _emailController.text,
               token: Login.bearerToken,
-              customerId: Login.customerId,
+            )),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF57CC99),
+            content: Text(
+              'Please Enter Valid Email or Password',
+              style: TextStyle(color: Colors.black),
             ),
           ),
         );
-      } else {
-        ScaffoldMessenger.of(context)
-            .showCustomSnackBar(context, "ERROR\nInvalid Entry");
+        print('Login failed with status code: ${response.statusCode}');
+        print('Error message: ${response.body}');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showCustomSnackBar(context, "Network Error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFF57CC99),
+          content: Text(
+            'Network Error',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+      );
+      print('Error occurred: $e');
+      if (e is http.ClientException) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF57CC99),
+            content: Text(
+              'Network Error',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        );
+        print('Possible CORS or network error.');
+      }
     }
   }
 
@@ -96,13 +115,13 @@ class _LoginState extends State<Login> {
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         Center(
                           child: Text(
                             'Log in',
@@ -118,7 +137,7 @@ class _LoginState extends State<Login> {
                                 ),
                           ),
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         _buildLabelText(context, "Email"),
                         const SizedBox(height: 2),
                         _buildProjectedTextFormField(
@@ -127,11 +146,13 @@ class _LoginState extends State<Login> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
-                            }
+                            } /* else if (!value.contains('@')) {
+                              return 'Please enter a valid email';
+                            }*/
                             return null;
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -153,8 +174,8 @@ class _LoginState extends State<Login> {
                                 ),
                                 Text(
                                   _isPasswordVisible ? 'Unhide' : 'Hide',
-                                  style: TextStyle(
-                                    color: const Color(0xFF838181),
+                                  style: const TextStyle(
+                                    color: Color(0xFF838181),
                                     fontSize: 16,
                                   ),
                                 )
@@ -170,13 +191,13 @@ class _LoginState extends State<Login> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => work(),
+                                builder: (context) => const work(),
                               ),
                             );
                           },
                           child: _buildLabelText(context, "Forgot Password ?"),
                         ),
-                        SizedBox(height: 40),
+                        const SizedBox(height: 40),
                         Center(
                           child: SizedBox(
                             height: 48.0,
@@ -186,6 +207,7 @@ class _LoginState extends State<Login> {
                               ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
+                                  // Call the login function here
                                   _login();
                                 }
                               },
@@ -218,29 +240,28 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Column(
-                          children: [
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: Column(children: [
                             Image.asset(
                               'assets/oldcare2.png',
                               height: 250,
                               fit: BoxFit.contain,
                             ),
-                            Center(
+                            const Center(
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   SizedBox(
                                     width: 175,
-                                    child: const Divider(
+                                    child: Divider(
                                       height: 1,
                                       color: Color(0x66666666),
                                     ),
                                   ),
-                                  const Text(
+                                  Text(
                                     "Or",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -248,7 +269,7 @@ class _LoginState extends State<Login> {
                                   ),
                                   SizedBox(
                                     width: 175,
-                                    child: const Divider(
+                                    child: Divider(
                                       height: 1,
                                       color: Color(0x66666666),
                                     ),
@@ -256,33 +277,32 @@ class _LoginState extends State<Login> {
                                 ],
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(
+                              height: 20,
+                            ),
                             Center(
                               child: GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => CreateAccount(),
-                                    ),
+                                        builder: (context) => const CreateAccount()),
                                   );
                                 },
                                 child: Text(
                                   'Create an account',
                                   style: TextStyle(
                                     fontSize: 20,
-                                    color: Color(0xFF296685),
+                                    color: const Color(0xFF296685),
                                     fontFamily:
                                         GoogleFonts.robotoFlex().fontFamily,
                                     decoration: TextDecoration.underline,
-                                    decorationColor: Color(0xFF296685),
+                                    decorationColor: const Color(0xFF296685),
                                   ),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                          ])),
                     ],
                   ),
                 ),
@@ -329,14 +349,15 @@ class _LoginState extends State<Login> {
         ),
         child: TextFormField(
           controller: controller,
-          obscureText: isPassword && !_isPasswordVisible,
-          decoration: InputDecoration(
-            hintText: isPassword ? 'Enter your password' : 'Enter your email',
+          cursorColor: const Color(0xFF838181),
+          obscureText: isPassword ? !_isPasswordVisible : false,
+          decoration: const InputDecoration(
             border: InputBorder.none,
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
           ),
           validator: validator,
+          style: const TextStyle(fontSize: 14),
         ),
       ),
     );
@@ -353,47 +374,5 @@ class _LoginState extends State<Login> {
         return null;
       },
     );
-  }
-}
-
-// Extension for custom snack bar
-extension CustomSnackBar on ScaffoldMessengerState {
-  void showCustomSnackBar(BuildContext context, String text) {
-    OverlayState? overlayState = Overlay.of(context);
-    OverlayEntry overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        bottom: 50.0,
-        left: MediaQuery.of(context).size.width * 0.2,
-        width: MediaQuery.of(context).size.width * 0.6,
-        child: Material(
-          elevation: 5.0,
-          borderRadius: BorderRadius.circular(8.0),
-          child: Container(
-            height: 75,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Center(
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontSize: 22.0,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    // Insert the overlay entry into the overlay state
-    overlayState.insert(overlayEntry);
-
-    // Remove the overlay entry after a delay of 2 seconds
-    Future.delayed(const Duration(seconds: 4), () {
-      overlayEntry.remove();
-    });
   }
 }

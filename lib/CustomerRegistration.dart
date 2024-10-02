@@ -8,12 +8,7 @@ import 'package:http/http.dart' as http;
 class Customerregistration extends StatefulWidget {
   final String email;
   final String token;
-  final int customerId;
-  const Customerregistration(
-      {super.key,
-      required this.email,
-      required this.token,
-      required this.customerId});
+  const Customerregistration({super.key, required this.email, required this.token});
 
   @override
   State<Customerregistration> createState() => _CustomerregistrationState();
@@ -21,6 +16,7 @@ class Customerregistration extends StatefulWidget {
 
 class _CustomerregistrationState extends State<Customerregistration> {
   final _formKey = GlobalKey<FormState>();
+
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _jobController = TextEditingController();
@@ -51,14 +47,13 @@ class _CustomerregistrationState extends State<Customerregistration> {
       if (response.statusCode == 200) {
         // Registration successful, navigate to Dashboard
         debugPrint("Registraion Successfull");
+        print(response.body);
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => Dashboard(
-                    email: widget.email,
-                    token: "Bearer ${widget.token}",
-                    customerId: widget.customerId,
-                  )),
+          MaterialPageRoute(builder: (contzxt) => Dashboard(
+            email: widget.email,
+            token: widget.token,
+          )),
         );
       } else {
         // Show error message if registration fails

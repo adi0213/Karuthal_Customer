@@ -1,19 +1,66 @@
-import 'package:chilla_customer/BookServices/AdditionalService.dart';
-import 'package:chilla_customer/BookServices/ServieceNeeded.dart';
+import 'package:chilla_customer/PatientEnrollBooking/AdditionalService.dart';
+import 'package:chilla_customer/PatientEnrollBooking/SelectPatient.dart';
+import 'package:chilla_customer/PatientEnrollBooking/ServieceNeeded.dart';
+import 'package:chilla_customer/PatientEnrollBooking/SelectGender.dart';
 
-import 'package:chilla_customer/dashboard.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BookService extends StatefulWidget {
-  const BookService({super.key});
+  final String token;
+  final int customerId;
+  const BookService({super.key, required this.token, required this.customerId});
 
   @override
   State<BookService> createState() => _BookServiceState();
 }
 
 class _BookServiceState extends State<BookService> {
+
+  var selectedServices,selectedPatients,selectedGender;
+
+  Future<void> bookRequest() async {
+    final url = 'http://104.237.9.211:8007/karuthal/api/v1/bookingrequest/create';
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${widget.token}',
+    };
+
+    final body = jsonEncode({
+      "enrolledByCustomer": {"customerId": widget.customerId},
+      "requestedServices" : selectedServices,
+      "preferredGender" : selectedGender,
+      "requestedFor" : selectedPatients
+    });
+
+    print(body);
+
+    try {
+      final response = await http.post(Uri.parse(url), headers: headers, body: body);
+      
+      if (response.statusCode == 200) {
+        print("Booking Successful");
+        print(response.body);
+        Navigator.pop(context);
+      } else {
+        // Handle error response
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Failed to enroll patient: ${response.body}'),
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      // Handle exceptions
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error occurred: $e'),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -42,13 +89,23 @@ class _BookServiceState extends State<BookService> {
                 SizedBox(
                   height: 5,
                 ),
-                ServieceNeeded(),
+                ServiceNeeded(
+                    onSelectionChanged: (selectedService) {
+                      print('Selected Service: $selectedService');
+                      selectedServices = selectedService;
+                    },
+                    token: widget.token,
+                  ),
                 SizedBox(height: 20),
                 _buildLabelText(context, "Additional Service"),
                 AdditionalService(),
                 SizedBox(height: 20),
                 _buildLabelText(context, "Caretaker Gender"),
-                AdditionalService(),
+                GenderNeeded(
+                  onSelectionChanged: (gender) {
+                    selectedGender = gender;
+                  },
+                ),
                 SizedBox(
                   height: 40,
                 ),
@@ -63,7 +120,14 @@ class _BookServiceState extends State<BookService> {
                 ),
                 SizedBox(height: 30),
                 _buildLabelText(context, "Patients list"),
-                AdditionalService(),
+                SelectPatient(
+                  onSelectionChanged: (patients){
+                    selectedPatients = patients;
+                    print(patients);
+                  },
+                  token: widget.token,
+                  customerId: widget.customerId
+                ),
                 SizedBox(height: 80),
                 Center(
                   child: SizedBox(
@@ -73,12 +137,12 @@ class _BookServiceState extends State<BookService> {
                         backgroundColor: const Color(0xFF57CC99),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Dashboard(
-                                  email: "", token: "", customerId: 6),
-                            ));
+                        bookRequest();
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => Dashboard(email: "", token: widget.token,),
+                        //     ));
                       },
                       child: Text(
                         "Book",

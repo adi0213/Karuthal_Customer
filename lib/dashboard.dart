@@ -1,25 +1,47 @@
-import 'package:chilla_customer/BookServices/Booking.dart';
+import 'package:chilla_customer/PatientEnrollBooking/Booking.dart';
 import 'package:chilla_customer/Error.dart';
-import 'package:chilla_customer/PatientEnroll.dart';
+import 'package:chilla_customer/PatientEnrollBooking/PatientEnroll.dart';
 import 'package:chilla_customer/feedback.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Dashboard extends StatefulWidget {
   final String email;
   final String token;
-  final int customerId;
+  static int customerId = -1;
 
   const Dashboard(
       {super.key,
       required this.email,
       required this.token,
-      required this.customerId});
+      //required this.customerId
+    });
 
   @override
   State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
+  Future<int> getCustomerId(String email, String token) async{
+    int cid = 0;
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${token}',
+    };
+    final customerList = await http.get(
+      Uri.parse("http://104.237.9.211:8007/karuthal/api/v1/persona/customers"),
+      headers: headers,
+    );
+    print("Token: $token");
+    print(jsonDecode(customerList.body));
+    jsonDecode(customerList.body).forEach((v)=>{
+      if (email == v['registeredUser']['email']){
+        cid = v['customerId'],
+      }
+    });
+    return cid;
+  }
   void _toggleDrawer(BuildContext context) {
     Navigator.pop(context);
   }
@@ -152,14 +174,15 @@ class _DashboardState extends State<Dashboard> {
                     topColor: Color(0xFF78DE90),
                     label: 'Enroll Patient',
                     fontSize: 38,
-                    onPressed: () {
+                    onPressed: () async{
+                      Dashboard.customerId = await getCustomerId(widget.email, widget.token);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => Patientenroll(
                                   email: widget.email,
                                   token: 'Bearer ${widget.token}',
-                                  customerId: widget.customerId,
+                                  customerId: Dashboard.customerId,
                                 )),
                       );
                     },
@@ -179,14 +202,15 @@ class _DashboardState extends State<Dashboard> {
                               bottomColor: Color(0xFF57CC99),
                               label: 'Feedback',
                               fontSize: 28,
-                              onPressed: () {
+                              onPressed: () async {
+                                Dashboard.customerId = await getCustomerId(widget.email, widget.token);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => FeedbackPage(
                                             email: widget.email,
                                             token: "Bearer ${widget.token}",
-                                            customerId: widget.customerId,
+                                            customerId: Dashboard.customerId,
                                           )),
                                 );
                               },
@@ -222,11 +246,15 @@ class _DashboardState extends State<Dashboard> {
                           bottomColor: Color(0xFF72D9C1),
                           label: '    Book \n  Service',
                           fontSize: 28,
-                          onPressed: () {
+                          onPressed: () async{
+                            Dashboard.customerId = await getCustomerId(widget.email, widget.token);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => BookService()),
+                                  builder: (context) => BookService(
+                                    token: widget.token,
+                                    customerId: Dashboard.customerId,
+                                  )),
                             );
                           },
                         ),

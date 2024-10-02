@@ -40,19 +40,19 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      physics: ClampingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       child: Container(
         color: Colors.white,
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: MediaQuery.of(context).size.height * 0.5,
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
                   AnimatedSwitcher(
-                    duration: Duration(seconds: 3),
+                    duration: const Duration(seconds: 3),
                     child: ClipRRect(
                       borderRadius: BorderRadius.zero,
                       child: Image.asset(
@@ -100,25 +100,25 @@ class _WelcomePageState extends State<WelcomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Login(),
+                          builder: (context) => const Login(),
                         ),
                       );
                     },
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(190, 52),
+                      backgroundColor: const Color(0xFF57CC99),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      shadowColor: Colors.black,
+                      elevation: 9,
+                    ),
                     child: Text(
                       'Get Started',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                       ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(190, 52),
-                      backgroundColor: Color(0xFF57CC99),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      shadowColor: Colors.black,
-                      elevation: 9,
                     ),
                   ),
                 ],

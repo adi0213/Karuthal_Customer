@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
 
-class ServieceNeeded extends StatefulWidget {
-  const ServieceNeeded({super.key});
+class GenderNeeded extends StatefulWidget {
+  final Function(String gender) onSelectionChanged; // Callback to parent
+  //final List<Map<String, String>> services; // List of services
+
+  const GenderNeeded({
+    super.key, 
+    required this.onSelectionChanged,// Accept services as a parameter
+  });
 
   @override
-  _ServieceNeeded createState() => _ServieceNeeded();
+  _GenderNeededState createState() => _GenderNeededState();
 }
 
-class _ServieceNeeded extends State<ServieceNeeded> {
+class _GenderNeededState extends State<GenderNeeded> {
+  var genders = ['MALE','FEMALE','TRANSGENDER'];
   bool _isExpanded = false;
   final TextEditingController _controller = TextEditingController();
   String _selectedHintText = 'Choose Service';
 
-  void _addToTextField(String mainText, String hintText) {
+  void _addToTextField(String gender) {
     setState(() {
-      _selectedHintText = mainText;
-      _controller.text = hintText;
+      _selectedHintText = gender;
+      _controller.text = gender;
       _controller.selection =
-          TextSelection.fromPosition(TextPosition(offset: hintText.length));
+          TextSelection.fromPosition(TextPosition(offset: gender.length));
       _isExpanded = false;
     });
+
+    widget.onSelectionChanged(gender); // Notify the parent of the selection
   }
 
   @override
@@ -79,18 +88,16 @@ class _ServieceNeeded extends State<ServieceNeeded> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildPartition(
-                          'Nursing (basic nursing services)', 'Nursing'),
-                      const Divider(color: Colors.grey),
-                      _buildPartition(
-                          'Assistance (accompanying to places such as hospitals, banks, shops etc and also going on behalf of them)',
-                          'Assistance'),
-                      const Divider(color: Colors.grey),
-                      _buildPartition(
-                          'Companionship (This includes engaging in conversations, listening to their stories, and offering a comforting presence. Additionally, companions assist with practical needs such as giving food, medication, and ensuring the patient feels cared for and attended to.)',
-                          'Companionship'),
-                    ],
+                    children: genders
+                        .map((gender) => Column(
+                              children: [
+                                _buildPartition(
+                                  gender
+                                ),
+                                const Divider(color: Colors.grey),
+                              ],
+                            ))
+                        .toList(),
                   ),
                 ),
             ],
@@ -100,17 +107,12 @@ class _ServieceNeeded extends State<ServieceNeeded> {
     );
   }
 
-  Widget _buildPartition(String mainText, String hintText) {
-    final bracketStart = mainText.indexOf('(');
-    final bracketEnd = mainText.indexOf(')') + 1;
-
-    final beforeBracketText = mainText.substring(0, bracketStart);
-    final bracketText = mainText.substring(bracketStart, bracketEnd);
-    final afterBracketText = mainText.substring(bracketEnd);
+  Widget _buildPartition(String gender) {
+    
 
     return GestureDetector(
       onTap: () {
-        _addToTextField(mainText, hintText);
+        _addToTextField(gender);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -118,15 +120,7 @@ class _ServieceNeeded extends State<ServieceNeeded> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: beforeBracketText,
-                style: const TextStyle(color: Colors.black),
-              ),
-              TextSpan(
-                text: bracketText,
-                style: const TextStyle(color: Colors.grey),
-              ),
-              TextSpan(
-                text: afterBracketText,
+                text: gender,
                 style: const TextStyle(color: Colors.black),
               ),
             ],
