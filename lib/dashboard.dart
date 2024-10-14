@@ -11,19 +11,19 @@ class Dashboard extends StatefulWidget {
   final String token;
   static int customerId = -1;
 
-  const Dashboard(
-      {super.key,
-      required this.email,
-      required this.token,
-      //required this.customerId
-    });
+  const Dashboard({
+    super.key,
+    required this.email,
+    required this.token,
+    //required this.customerId
+  });
 
   @override
   State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
-  Future<int> getCustomerId(String email, String token) async{
+  Future<int> getCustomerId(String email, String token) async {
     int cid = 0;
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -35,13 +35,15 @@ class _DashboardState extends State<Dashboard> {
     );
     print("Token: $token");
     print(jsonDecode(customerList.body));
-    jsonDecode(customerList.body).forEach((v)=>{
-      if (email == v['registeredUser']['email']){
-        cid = v['customerId'],
-      }
-    });
+    jsonDecode(customerList.body).forEach((v) => {
+          if (email == v['registeredUser']['email'])
+            {
+              cid = v['customerId'],
+            }
+        });
     return cid;
   }
+
   void _toggleDrawer(BuildContext context) {
     Navigator.pop(context);
   }
@@ -174,8 +176,9 @@ class _DashboardState extends State<Dashboard> {
                     topColor: Color(0xFF78DE90),
                     label: 'Enroll Patient',
                     fontSize: 38,
-                    onPressed: () async{
-                      Dashboard.customerId = await getCustomerId(widget.email, widget.token);
+                    onPressed: () async {
+                      Dashboard.customerId =
+                          await getCustomerId(widget.email, widget.token);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -203,7 +206,8 @@ class _DashboardState extends State<Dashboard> {
                               label: 'Feedback',
                               fontSize: 28,
                               onPressed: () async {
-                                Dashboard.customerId = await getCustomerId(widget.email, widget.token);
+                                Dashboard.customerId = await getCustomerId(
+                                    widget.email, widget.token);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -223,8 +227,8 @@ class _DashboardState extends State<Dashboard> {
                               width: 172,
                               topColor: Color(0xFF49C38E),
                               bottomColor: Color(0xFF57CC99),
-                              label: '   View Service \n        History',
-                              fontSize: 28,
+                              label: 'View Service \n      History',
+                              fontSize: 24,
                               onPressed: () {
                                 Navigator.push(
                                     context,
@@ -246,15 +250,16 @@ class _DashboardState extends State<Dashboard> {
                           bottomColor: Color(0xFF72D9C1),
                           label: '    Book \n  Service',
                           fontSize: 28,
-                          onPressed: () async{
-                            Dashboard.customerId = await getCustomerId(widget.email, widget.token);
+                          onPressed: () async {
+                            Dashboard.customerId =
+                                await getCustomerId(widget.email, widget.token);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => BookService(
-                                    token: widget.token,
-                                    customerId: Dashboard.customerId,
-                                  )),
+                                        token: widget.token,
+                                        customerId: Dashboard.customerId,
+                                      )),
                             );
                           },
                         ),

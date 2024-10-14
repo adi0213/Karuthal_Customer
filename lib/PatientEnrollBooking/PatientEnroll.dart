@@ -269,7 +269,7 @@ class _PatientenrollState extends State<Patientenroll> {
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
-                                              vertical: 11, horizontal: 15),
+                                              vertical: 15, horizontal: 10),
                                           decoration: BoxDecoration(
                                             border: Border.all(
                                                 color: Colors.black54),
@@ -303,7 +303,7 @@ class _PatientenrollState extends State<Patientenroll> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildLabelText(context, "E-Mail"),
+                              _buildLabelText(context, "Patient's E-Mail"),
                               const SizedBox(height: 8),
                               _buildTextField(
                                 context,
@@ -317,7 +317,7 @@ class _PatientenrollState extends State<Patientenroll> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildLabelText(context, "Phone"),
+                              _buildLabelText(context, "Patient's Phone"),
                               const SizedBox(height: 8),
                               _buildTextField(
                                 context,

@@ -125,7 +125,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 ],
               ),
             ),
-            SizedBox(height: 0.04 * MediaQuery.of(context).size.height),
+            SizedBox(height: 1 * MediaQuery.of(context).size.height),
           ],
         ),
       ),
