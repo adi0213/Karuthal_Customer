@@ -41,3 +41,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+pubspec.lock
+# Flutter generated files
+**/generated_plugin_registrant.*
+**/generated_plugins.cmake
+macos/Flutter/ephemeral/
+windows/flutter/ephemeral/
+linux/flutter/ephemeral/
