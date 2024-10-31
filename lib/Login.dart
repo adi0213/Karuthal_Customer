@@ -58,6 +58,7 @@ class _LoginState extends State<Login> {
           );
         }
         else{
+          print(jsonDecode(response.body)['result']['registered'] is bool);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => Dashboard(

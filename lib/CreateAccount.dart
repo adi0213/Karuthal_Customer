@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:chilla_customer/CustomerRegistration.dart';
+import 'otp.dart';
 import 'package:chilla_customer/Login.dart';
 
 import 'package:chilla_customer/design.dart';
@@ -31,7 +31,6 @@ class _CreateAccountState extends State<CreateAccount> {
 
     final Map<String, dynamic> requestData = {
       'email': _emailController.text.trim(),
-      'password': _passwordController.text.trim(),
       "persona": "customer"
     };
 
@@ -46,57 +45,22 @@ class _CreateAccountState extends State<CreateAccount> {
       );
 
       if (response.statusCode == 200) {
-        await _login();
+        print(response.body);
+        // Go to OTP
+        if (jsonDecode(response.body)['status'] == 200) {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => OtpVerification(
+                    email: _emailController.text.trim(),
+                  )));
+        } else {
+          _showErrorDialog('${jsonDecode(response.body)['message']}');
+        }
       } else {
         _showErrorDialog('Failed to create account. Please try again.');
       }
     } catch (e) {
       print(e);
       _showErrorDialog('Error occurred. Please try again later.');
-    }
-  }
-
-  Future<void> _login() async {
-    const String url =
-        'http://104.237.9.211:8007/karuthal/api/v1/usermanagement/login';
-    final Map<String, dynamic> body = {
-      "username": _emailController.text,
-      "password": _passwordController.text,
-    };
-
-    final Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
-        body: json.encode(body),
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        print("Create: ,$responseData");
-        CreateAccount.bearerToken = responseData['authtoken'];
-        print(CreateAccount.bearerToken);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Customerregistration(
-                    email: _emailController.text,
-                    token: CreateAccount.bearerToken,
-                  )),
-        );
-      } else {
-        //ScaffoldMessenger.of(context).showCustomSnackBar(context, "ERROR\nInvalid Entry");
-        print('Login failed with status code: ${response.statusCode}');
-        print('Error message: ${response.body}');
-      }
-    } catch (e) {
-      //ScaffoldMessenger.of(context).showCustomSnackBar(context, "Network Error");
-      print('Error occurred: $e');
     }
   }
 
@@ -179,36 +143,6 @@ class _CreateAccountState extends State<CreateAccount> {
                           },
                         ),
                         const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildLabelText(context, "Password"),
-                            Row(children: [
-                              IconButton(
-                                icon: Icon(
-                                  color: const Color(0xFF838181),
-                                  _isPasswordVisible
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
-                              ),
-                              Text(
-                                _isPasswordVisible ? 'Unhide' : 'Hide',
-                                style: const TextStyle(
-                                  color: Color(0xFF838181),
-                                  fontSize: 16,
-                                ),
-                              )
-                            ]),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        _buildPasswordField(),
                         const SizedBox(height: 40),
                         Center(
                           child: SizedBox(
