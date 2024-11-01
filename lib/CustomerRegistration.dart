@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
+import 'global_api_constants.dart';
+
 class Customerregistration extends StatefulWidget {
   final String email;
   final String token;
@@ -25,8 +27,8 @@ class _CustomerregistrationState extends State<Customerregistration> {
   final TextEditingController _cityController = TextEditingController();
 
   Future<void> _registerCustomer() async {
-    final url = Uri.parse(
-        'http://104.237.9.211:8007/karuthal/api/v1/persona/regcustomer');
+    String urlEndpoint = registerCustomerUrl();
+    final url = Uri.parse(urlEndpoint);
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',

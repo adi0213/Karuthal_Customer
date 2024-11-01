@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../global_api_constants.dart';
+
 class Patientenroll extends StatefulWidget {
   final String email;
   final String token;
@@ -37,8 +39,7 @@ class _PatientenrollState extends State<Patientenroll> {
   var dropDownWidth;
 
   Future<void> _enrollPatient() async {
-    const url =
-        'http://104.237.9.211:8007/karuthal/api/v1/persona/enrollpatient';
+    String url = getEnrollPatientUrl();
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',

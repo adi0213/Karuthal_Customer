@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../global_api_constants.dart';
+
 class BookService extends StatefulWidget {
   final String token;
   final int customerId;
@@ -22,8 +24,7 @@ class _BookServiceState extends State<BookService> {
   var selectedServices, selectedPatients, selectedGender;
 
   Future<void> bookRequest() async {
-    const url =
-        'http://104.237.9.211:8007/karuthal/api/v1/bookingrequest/create';
+    String url = getCreateBookingRequestUrl();
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
