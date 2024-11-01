@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
+import 'global_api_constants.dart';
+
 
 class Login extends StatefulWidget {
   static String bearerToken = "";
@@ -24,7 +26,7 @@ class _LoginState extends State<Login> {
   bool _isPasswordVisible = false;
 
   Future<void> _login() async {
-    const String url ='http://104.237.9.211:8007/karuthal/api/v1/usermanagement/login';
+    String url = loginUrl();
     final Map<String, dynamic> body = {
       "username": _emailController.text,
       "password": _passwordController.text,

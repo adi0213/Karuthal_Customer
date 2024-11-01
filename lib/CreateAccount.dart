@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'global_api_constants.dart';
 import 'otp.dart';
 import 'package:chilla_customer/Login.dart';
 
@@ -26,8 +27,7 @@ class _CreateAccountState extends State<CreateAccount> {
   Future<void> _signUp() async {
     if (!_formKey.currentState!.validate()) return;
 
-    const String apiUrl =
-        'http://104.237.9.211:8007/karuthal/api/v1/persona/signup';
+    String apiUrl = getSignupUrl();
 
     final Map<String, dynamic> requestData = {
       'email': _emailController.text.trim(),

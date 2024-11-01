@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'CustomerRegistration.dart';
+import 'global_api_constants.dart';
 
 class Pass extends StatefulWidget {
   final String email;
@@ -29,9 +30,9 @@ class _PassState extends State<Pass> {
       'email': widget.email,
       'password': password,
     };
-
+    String apiUrl = getResetPasswordUrl();
     var response = await http.post(
-      Uri.parse("http://104.237.9.211:8007/karuthal/api/v1/usermanagement/users/resetpassword"),
+      Uri.parse(apiUrl),
       headers: headers,
       body: jsonEncode(body)
     );

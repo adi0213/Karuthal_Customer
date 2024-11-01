@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../global_api_constants.dart';
+
 class ServiceNeeded extends StatefulWidget {
   final Function(List selectedValues) onSelectionChanged; // Callback to parent
   final String token;
@@ -26,8 +28,9 @@ class _ServiceNeededState extends State<ServiceNeeded> {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${widget.token}',
     };
+    String url = getServicesUrl();
     final serviceList = await http.get(
-      Uri.parse("http://104.237.9.211:8007/karuthal/api/v1/metadata/services"),
+      Uri.parse(url),
       headers: headers,
     );
     //print(jsonDecode(serviceList.body)[0]['name']);

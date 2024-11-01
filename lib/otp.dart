@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'design.dart';
+import 'global_api_constants.dart';
 import 'pass.dart';
 import 'package:http/http.dart' as http;
 
@@ -42,12 +43,12 @@ class _OtpVerificationState extends State<OtpVerification> {
     };
 
     final Map<String, String> body = {
-      'email': 'application/json',
+      'email':  widget.email,
       'otp': otp,
     };
-
+    String apiUrl = getOtpVerifyUrl();
     var response = await http.post(
-        Uri.parse("http://104.237.9.211:8007/karuthal/api/v1/email/verify-otp"),
+        Uri.parse(apiUrl),
         headers: headers,
         body: jsonEncode(body));
     if (response.statusCode == 200) {
