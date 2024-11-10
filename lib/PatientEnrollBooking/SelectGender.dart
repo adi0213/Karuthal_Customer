@@ -17,7 +17,7 @@ class _GenderNeededState extends State<GenderNeeded> {
   var genders = ['MALE', 'FEMALE', 'TRANSGENDER'];
   bool _isExpanded = false;
   final TextEditingController _controller = TextEditingController();
-  String _selectedHintText = 'Choose Service';
+  String _selectedHintText = 'No Gender Preferences';
 
   void _addToTextField(String gender) {
     setState(() {

@@ -10,7 +10,11 @@ class work extends StatefulWidget {
 class _workState extends State<work> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFFC778CA),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: Center(
         child: Text(
           'WORK UNDER PROGRESS!',

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:chilla_customer/PatientEnrollBooking/SelectDistrict.dart';
+import 'package:chilla_customer/dashboard.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,11 +10,13 @@ class Patientenroll extends StatefulWidget {
   final String email;
   final String token;
   final int customerId;
+  final String userId;
   const Patientenroll(
       {super.key,
       required this.email,
       required this.token,
-      required this.customerId});
+      required this.customerId,
+      required this.userId});
 
   @override
   State<Patientenroll> createState() => _PatientenrollState();
@@ -64,7 +68,7 @@ class _PatientenrollState extends State<Patientenroll> {
       if (response.statusCode == 200) {
         print("Successful");
         print(response.body);
-        Navigator.pop(context);
+        showCongratulationsDialog(context, response);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Failed to enroll patient: ${response.body}'),
@@ -77,6 +81,34 @@ class _PatientenrollState extends State<Patientenroll> {
         backgroundColor: Colors.red,
       ));
     }
+  }
+
+  void showCongratulationsDialog(BuildContext context, http.Response response) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        Timer(Duration(seconds: 3), () {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                email: widget.email,
+                token: widget.token,
+                customerId: widget.customerId,
+                userId: widget.userId,
+              ),
+            ),
+          );
+        });
+
+        return AlertDialog(
+          title: Text("Congratulations!"),
+          content: Text("You have successfully Enrolled."),
+        );
+      },
+    );
   }
 
   void _showGenderSelectionOverlay(BuildContext context, var topMargin) {
@@ -150,7 +182,14 @@ class _PatientenrollState extends State<Patientenroll> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 15),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.arrow_back),
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                    const SizedBox(height: 3),
                     Center(
                       child: Column(
                         children: [
@@ -462,7 +501,7 @@ class _PatientenrollState extends State<Patientenroll> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: const BorderSide(color: Color(0xFF57CC99)),
+            borderSide: const BorderSide(color: Color(0xFFEBBBED)),
           ),
           errorStyle: const TextStyle(
             color: Colors.red,
@@ -492,7 +531,7 @@ class _PatientenrollState extends State<Patientenroll> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: const BorderSide(color: Colors.greenAccent),
+            borderSide: const BorderSide(color: Color(0xFFEBBBED)),
           ),
           errorStyle: const TextStyle(
             color: Colors.red,
@@ -548,7 +587,7 @@ class _GenderNeededState extends State<GenderNeeded> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF57CC99)),
+        border: Border.all(color: Color(0xFFEBBBED)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

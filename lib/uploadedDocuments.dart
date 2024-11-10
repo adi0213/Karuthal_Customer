@@ -151,6 +151,9 @@ class _UploadedDocumentsState extends State<UploadedDocuments> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
+          if (snapshot.data == null) {
+            return Center(child: Text("No Documents Uploaded"));
+          }
           return Center(child: Text("Error: ${snapshot.error}"));
         } else if (snapshot.hasData) {
           documentsList = snapshot.data ?? [];

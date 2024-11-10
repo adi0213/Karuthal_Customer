@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:chilla_customer/PatientEnrollBooking/AdditionalService.dart';
 import 'package:chilla_customer/PatientEnrollBooking/SelectPatient.dart';
 import 'package:chilla_customer/PatientEnrollBooking/ServieceNeeded.dart';
 import 'package:chilla_customer/PatientEnrollBooking/SelectGender.dart';
+import 'package:chilla_customer/dashboard.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -10,9 +13,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BookService extends StatefulWidget {
+  final String email;
   final String token;
   final int customerId;
-  const BookService({super.key, required this.token, required this.customerId});
+
+  final String userId;
+  const BookService(
+      {super.key,
+      required this.token,
+      required this.customerId,
+      required this.email,
+      required this.userId});
 
   @override
   State<BookService> createState() => _BookServiceState();
@@ -46,7 +57,7 @@ class _BookServiceState extends State<BookService> {
       if (response.statusCode == 200) {
         print("Booking Successful");
         print(response.body);
-        Navigator.pop(context);
+        showCongratulationsDialog(context, response);
       } else {
         // Handle error response
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -63,6 +74,34 @@ class _BookServiceState extends State<BookService> {
     }
   }
 
+  void showCongratulationsDialog(BuildContext context, http.Response response) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        Timer(Duration(seconds: 3), () {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                email: widget.email,
+                token: widget.token,
+                customerId: widget.customerId,
+                userId: widget.userId,
+              ),
+            ),
+          );
+        });
+
+        return AlertDialog(
+          title: Text("Congratulations!"),
+          content: Text("You have successfully Booked."),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -70,8 +109,15 @@ class _BookServiceState extends State<BookService> {
         appBar: AppBar(
           backgroundColor: Color(0xFFC778CA),
           iconTheme: const IconThemeData(color: Colors.white),
-          title: Text("Bookings"),
-          titleTextStyle: TextStyle(color: Colors.white),
+          title: Text(
+            "Bookings",
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: Colors.white,
+                  fontFamily: GoogleFonts.anekGurmukhi().fontFamily,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 27.0,
+                ),
+          ),
         ),
         body: SingleChildScrollView(
           child: Padding(

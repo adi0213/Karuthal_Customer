@@ -1,19 +1,21 @@
+import 'dart:async';
 import 'dart:convert';
-//import 'package:chilla_customer/CreateAccount.dart';
+
 import 'package:chilla_customer/PatientEnrollBooking/SelectDistrict.dart';
 import 'package:chilla_customer/dashboard.dart';
-import 'Login.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:chilla_customer/WelcomePage.dart';
 
 class Customerregistration extends StatefulWidget {
   final String email;
   final String token;
   final String password;
   const Customerregistration(
-      {super.key, required this.email, required this.token, required this.password});
+      {super.key,
+      required this.email,
+      required this.token,
+      required this.password});
 
   @override
   State<Customerregistration> createState() => _CustomerregistrationState();
@@ -28,7 +30,8 @@ class _CustomerregistrationState extends State<Customerregistration> {
   final TextEditingController _cityController = TextEditingController();
 
   Future<void> _login(String email, String password) async {
-    const String url ='http://104.237.9.211:8007/karuthal/api/v1/usermanagement/login';
+    const String url =
+        'http://104.237.9.211:8007/karuthal/api/v1/usermanagement/login';
     final Map<String, dynamic> body = {
       "username": email,
       "password": password,
@@ -48,23 +51,12 @@ class _CustomerregistrationState extends State<Customerregistration> {
 
       if (loginResponse.statusCode == 200) {
         print(loginResponse.body);
-        Navigator.of(context).popUntil(
-          (route) => route.isFirst
-        );
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => Dashboard(
-              email: email,
-              token: jsonDecode(loginResponse.body)['result']['authtoken'],
-              customerId: jsonDecode(loginResponse.body)['result']['customerId'],
-              userId: jsonDecode(loginResponse.body)['result']['id'],
-            )),
-          );
-      } 
+        showCongratulationsDialog(context, loginResponse);
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFF57CC99),
+          backgroundColor: Color(0xFFC778CA),
           content: Text(
             'Error',
             style: TextStyle(color: Colors.black),
@@ -75,7 +67,7 @@ class _CustomerregistrationState extends State<Customerregistration> {
       if (e is http.ClientException) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF57CC99),
+            backgroundColor: Color(0xFFC778CA),
             content: Text(
               'Network Error',
               style: TextStyle(color: Colors.black),
@@ -85,6 +77,36 @@ class _CustomerregistrationState extends State<Customerregistration> {
         print('Possible CORS or network error.');
       }
     }
+  }
+
+  void showCongratulationsDialog(
+      BuildContext context, http.Response loginResponse) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        Timer(Duration(seconds: 3), () {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                email: widget.email,
+                token: jsonDecode(loginResponse.body)['result']['authtoken'],
+                customerId: jsonDecode(loginResponse.body)['result']
+                    ['customerId'],
+                userId: jsonDecode(loginResponse.body)['result']['id'],
+              ),
+            ),
+          );
+        });
+
+        return AlertDialog(
+          title: Text("Congratulations!"),
+          content: Text("You have successfully Registered."),
+        );
+      },
+    );
   }
 
   Future<void> _registerCustomer() async {

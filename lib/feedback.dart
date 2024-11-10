@@ -46,6 +46,26 @@ class _FeedbackPageState extends State<FeedbackPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xFFC778CA),
+          title: Text(
+            "Post-Shift Feedback",
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: Colors.white,
+                  fontFamily: GoogleFonts.anekGurmukhi().fontFamily,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 27.0,
+                ),
+          ),
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back),
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
+        ),
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
             child: SafeArea(
@@ -56,20 +76,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: Text(
-                      "Post-Shift Feedback",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineLarge
-                          ?.copyWith(
-                            color: Color(0xFFC778CA),
-                            fontFamily: GoogleFonts.anekGurmukhi().fontFamily,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 27.0,
-                          ),
-                    ),
-                  ),
                   const SizedBox(height: 20),
                   const Text(
                     'Please rate your overall experience',

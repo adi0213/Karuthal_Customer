@@ -181,6 +181,7 @@ class _DashboardState extends State<Dashboard> {
                                   email: widget.email,
                                   token: 'Bearer ${widget.token}',
                                   customerId: widget.customerId,
+                                  userId: widget.userId,
                                 )),
                       );
                     },
@@ -241,7 +242,7 @@ class _DashboardState extends State<Dashboard> {
                           width: 172,
                           topColor: Color(0xFFD2B5E4),
                           bottomColor: Color(0xFFDBC1EB),
-                          label: '    Book \n  Service',
+                          label: '    Choose \n  Service',
                           fontSize: 28,
                           onPressed: () async {
                             Navigator.push(
@@ -250,6 +251,8 @@ class _DashboardState extends State<Dashboard> {
                                   builder: (context) => BookService(
                                         token: widget.token,
                                         customerId: widget.customerId,
+                                        email: widget.email,
+                                        userId: widget.userId,
                                       )),
                             );
                           },
